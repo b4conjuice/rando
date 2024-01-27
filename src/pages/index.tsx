@@ -12,9 +12,14 @@ const getRando = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
 
+const findDuplicates = (arr: string[]) =>
+  arr.filter((item, index) => arr.indexOf(item) !== index)
+
 export default function Home() {
   const [itemsText, setItemsText] = useLocalStorage('items', '')
   const items = (itemsText ?? '').split('\n').filter(item => item)
+  const duplicates = findDuplicates(items)
+  const hasDuplicates = duplicates.length > 0
   const [randomIndex, setRandomIndex] = useState<number | null>(null)
   const randomItem = randomIndex !== null ? items[randomIndex] : null
   return (
@@ -34,7 +39,10 @@ export default function Home() {
       </Header>
       <Main className='flex flex-col space-y-4 px-4'>
         <textarea
-          className='bg-cobalt h-full w-full flex-grow'
+          className={classNames(
+            'h-full w-full flex-grow',
+            hasDuplicates ? 'bg-cb-off-blue' : 'bg-cobalt'
+          )}
           value={itemsText}
           onChange={e => {
             setItemsText(e.target.value)
